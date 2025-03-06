@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
     
     // Loop for input
     //unsigned char buf[BUFFER_SIZE + 1] = {0}; // +1: Save space for the final '\0' char
-    unsigned char c;
+    char c;
 
     int state = 0;
     while (STOP == FALSE)

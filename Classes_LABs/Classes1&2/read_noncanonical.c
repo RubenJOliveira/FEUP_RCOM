@@ -91,59 +91,59 @@ int main(int argc, char *argv[])
         perror("tcsetattr");
         exit(-1);
     }
-
+    
     printf("New termios structure set\n");
-
+    
     // Loop for input
-    unsigned char buf[BUFFER_SIZE + 1] = {0}; // +1: Save space for the final '\0' char
+    //unsigned char buf[BUFFER_SIZE + 1] = {0}; // +1: Save space for the final '\0' char
+    unsigned char c;
 
     int state = 0;
     while (STOP == FALSE)
     {
         // Returns after 5 chars have been input
-        int bytes = read(fd, buf[state], 1);
-        //buf[bytes] = '\0'; // Set end of string to '\0', so we can printf
+        int bytes = read(fd, &c, 1);
 
-        printf(":%02X:%d\n", buf[state], bytes);
+        printf("%d", state);
 
         switch (state)
         {
         case 0:
-            if(buf[state] == FLAG)
+            if(c == FLAG)
                 state++;
             else
                 state = 0;  
             break;
 
         case 1:
-            if(buf[state] == A)
+            if(c == A)
                 state++;
-            else if(buf[state] == FLAG) 
+            else if(c == FLAG) 
                 state=1;
             else 
                 state = 0;
             break;
 
         case 2:
-            if(buf[state] == C)
+            if(c == C)
                 state++;
-            else if(buf[state] == FLAG)
+            else if(c == FLAG)
                 state = 1;
             else 
                 state = 0;
             break;
 
         case 3:
-            if(buf[state] == BCC1)
+            if(c == BCC1)
                 state++;
-            else if(buf[state] == FLAG)
+            else if(c == FLAG)
                 state = 1;
             else 
                 state = 0;
             break;
         
             case 4:
-            if(buf[state] == FLAG)
+            if(c == FLAG)
                 STOP = TRUE;
             else
                 state=0;
@@ -151,7 +151,6 @@ int main(int argc, char *argv[])
         }
           
     }
-
     // The while() cycle should be changed in order to respect the specifications
     // of the protocol indicated in the Lab guide
 

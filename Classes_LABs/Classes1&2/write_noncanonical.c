@@ -19,6 +19,11 @@
 #define FALSE 0
 #define TRUE 1
 
+#define HEADER_SIZE 5
+#define FLAG 0x7E
+#define A 0x03
+#define C 0x03
+ #define BCC1 A^C
 #define BUF_SIZE 256
 
 volatile int STOP = FALSE;
@@ -90,20 +95,33 @@ int main(int argc, char *argv[])
     printf("New termios structure set\n");
 
     // Create string to send
-    unsigned char buf[BUF_SIZE] = {0};
+    unsigned char buf[HEADER_SIZE] = {FLAG, A, C, BCC1, FLAG}; 
 
-    for (int i = 0; i < BUF_SIZE; i++)
-    {
-        buf[i] = 'a' + i % 26;
-    }
+   
 
     // In non-canonical mode, '\n' does not end the writing.
     // Test this condition by placing a '\n' in the middle of the buffer.
     // The whole buffer must be sent even with the '\n'.
-    buf[5] = '\n';
+    //buf[5] = '\n';
 
-    int bytes = write(fd, buf, BUF_SIZE);
+    int bytes = write(fd, buf, HEADER_SIZE);
     printf("%d bytes written\n", bytes);
+
+    // Wait until all bytes have been written to the serial port
+    sleep(1);
+
+//---------------RECEIVE UA FRAME-----------------//
+
+    unsigned char buf2[HEADER_SIZE + 1] = {0}; // +1: Save space for the final '\0' char
+
+    
+    // Returns after 5 chars have been input
+    int bytes2 = read(fd, buf2, HEADER_SIZE);
+    buf2[bytes2] = '\0'; // Set end of string to '\0', so we can printf
+  
+    for(int i = 0; i < 5; i++){
+        printf("var = 0x%02X\n", buf2[i]);
+    }
 
     // Wait until all bytes have been written to the serial port
     sleep(1);

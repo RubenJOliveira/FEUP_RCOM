@@ -22,10 +22,14 @@
 #define BUF_SIZE 256
 
 #define FLAG 0x7E
-#define A 0x01
-#define C 0x07
+#define A 0x03
+#define C 0x03
 #define BCC1 A^C
-#define BUFFER_SIZE 5
+#define A_R 0x01
+#define C_R 0x07
+#define BCC2 A_R^C_R
+
+#define UA_SIZE 5
 
 volatile int STOP = FALSE;
 
@@ -95,7 +99,7 @@ int main(int argc, char *argv[])
     printf("New termios structure set\n");
     
     // Loop for input
-    //unsigned char buf[BUFFER_SIZE + 1] = {0}; // +1: Save space for the final '\0' char
+    unsigned char buf[UA_SIZE] = {FLAG, A_R, C_R, BCC1, FLAG};
     char c;
 
     int state = 0;
@@ -143,14 +147,17 @@ int main(int argc, char *argv[])
             break;
         
             case 4:
-            if(c == FLAG)
+            if(c == FLAG){
                 STOP = TRUE;
+                write(fd, buf, 5);
+            }
             else
                 state=0;
             break;
         }
-          
     }
+    
+
     // The while() cycle should be changed in order to respect the specifications
     // of the protocol indicated in the Lab guide
 

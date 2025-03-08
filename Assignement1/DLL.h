@@ -37,3 +37,7 @@
 
 
 int LLOPEN(int fd, int com_mode);
+
+
+void transmit_UA(int fd, int com_mode);
+void transmit_SET(int fd);

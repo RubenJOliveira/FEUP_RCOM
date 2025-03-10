@@ -29,15 +29,29 @@
 #define REJ0 0x01
 #define REJ1 0x81
 
+//Information frames control
+#define C0 0x00                //Information frame 0
+#define C1 0x40                //Information frame 1
+
+
 #define UA 0x07
 #define SET 0x03
 #define DISC 0x0B
-#define START 0x01
-#define END 0x02
+
 
 
 int LLOPEN(int fd, int com_mode);
 
+int LLREAD(int fd, char *payload);
+
+int LLWRITE(int fd, char *payload, int length);
+
+int LLCLOSE(int fd, int com_mode);
+
 
 void transmit_UA(int fd, int com_mode);
 void transmit_SET(int fd);
+
+void transmit_REJ();
+
+void transmit_RR();
